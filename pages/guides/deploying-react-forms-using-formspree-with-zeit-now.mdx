@@ -1,0 +1,230 @@
+import Guide from '~/components/layout/guide'
+import Snippet from '~/components/snippet'
+import { InlineCode } from '~/components/text/code'
+import Caption from '~/components/text/caption'
+import Note from '~/components/text/note'
+import { Image } from '~/components/media'
+import { GenericLink } from '~/components/text/link'
+
+export const meta = {
+  title: 'Deploying React Forms Using Formspree with ZEIT Now',
+  description:
+    'Create and deploy a React form with the help of Formspree and ZEIT Now.',
+  published: '2019-09-05T12:00:00.860Z',
+  authors: ['msweeneydev'],
+  url: '/guides/deploying-react-forms-using-formspree-with-zeit-now',
+  editUrl:
+    'pages/guides/deploying-react-forms-using-formspree-with-zeit-now.mdx',
+  lastEdited: '2019-09-05T11:08:29.000Z'
+}
+
+[Formspree](https://formspree.io/) is a form backend that sends submissions via email, and connects to several 3rd party services such as Google Sheets, Mailchimp, Trello and more. Formspree also provides spam mitigation and filtering, file upload, auto responses and other tools to help you manage your forms.
+
+In this guide, you will discover how to create a contact-us form using [React](https://reactjs.org/) and [Formik](https://github.com/jaredpalmer/formik), handle the form submission with [Formspree](https://formspree.io/) and deploy it with ZEIT Now.
+
+## Step 1: Creating a New Formspree form
+
+Get started integrating Formspree with ZEIT Now by using the [Create a Form with ZEIT Now page](https://formspree.io/create/zeit). Add the email you’d like to receive form submissions in the box and click **Create**.
+
+<Image
+  src={`${
+    process.env.ASSETS
+  }/guides/deploying-react-forms-using-formspree-with-zeit-now/formspree-create.png`}
+  width={780}
+  height={777}
+  oversize
+/>
+<Caption>The <b>Create a Form with ZEIT Now</b> page on Formspree.</Caption>
+
+This will first ask you to provide a password, then you’ll be redirected to an integration page where you can see the form URL.
+
+<Image
+  src={`${
+    process.env.ASSETS
+  }/guides/deploying-react-forms-using-formspree-with-zeit-now/formspree-endpoint.png`}
+  width={816}
+  height={1343}
+  oversize
+/>
+<Caption>The <b>Form Details Integration</b> page on Formspree.</Caption>
+
+Make a note of the URL endpoint. This will be used that later to submit the form you build.
+
+Next, you will create a React app using [Create-React-App](https://reactjs.org/docs/create-a-new-react-app.html) and add a form using [Formik](https://github.com/jaredpalmer/formik).
+
+## Step 2: Building Your Form
+
+Create a React app using the terminal:
+
+<Snippet dark text="npm create react-app my-formspree-app && cd my-formspree-app" />
+<Caption>
+  Creating and entering into a React app.
+</Caption>
+
+Formik is a library used to reduce the overhead of building and validating forms in React. Add the `formik` and `axios` dependencies to your project:
+
+<Snippet dark text="npm install formik axios" />
+<Caption>
+  Adding the <InlineCode>formik</InlineCode> and <InlineCode>axios</InlineCode> dependencies to the project.
+</Caption>
+
+Add a `ContactForm.js` file to the `/src` directory with the code below:
+
+```jsx
+import React from 'react'
+import { Formik, Form, Field } from 'formik'
+import axios from 'axios'
+
+export default () => (
+  <div>
+    <h1>Contact Us</h1>
+    <Formik
+      onSubmit={(values, actions) => {
+        axios({
+          method: 'post',
+          url: 'https://formspree.io/your-formspree-endpoint',
+          data: values
+        })
+          .then(response => {
+            actions.setSubmitting(false)
+          })
+          .catch(error => {
+            actions.setErrors(error.errors.join(', '))
+          })
+      }}
+    >
+      {({ isSubmitting }) => (
+        <Form>
+          <Field type="email" name="_replyto" />
+          <Field component="textarea" name="message" />
+          <button type="submit" disabled={isSubmitting}>
+            Submit
+          </button>
+        </Form>
+      )}
+    </Formik>
+  </div>
+)
+```
+
+<Caption>
+  Adding a <InlineCode>ContactForm.js</InlineCode> file to the project.
+</Caption>
+
+This form takes two inputs, the user email and message, and uses `axios` to make a [POST request](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST) with the data the for Formspree endpoint received earlier on.
+
+The `<Form>` and `<Field>` components will be rendered into HTML fields by Formik, however they are wired up to respond to the internal state maintained by Formik.
+
+<Note>
+  Make sure to replace <InlineCode>your-formspree-endpoint</InlineCode> with the
+  endpoint received in{' '}
+  <GenericLink href="#step-1:-creating-a-new-formspree-form">
+    Step 1
+  </GenericLink>
+  .
+</Note>
+
+Now you just need to use the form in your app. Change the contents of the `App.js` file to the following:
+
+```jsx
+import React from 'react'
+import ContactForm from './ContactForm'
+
+export default function App() {
+  return (
+    <div>
+      <ContactForm />
+    </div>
+  )
+}
+```
+
+<Caption>
+  Using the <InlineCode>ContactForm</InlineCode> component in the{' '}
+  <InlineCode>App.js</InlineCode> file.
+</Caption>
+
+<Note>
+  If using this form with an existing app, all you need to do is import the{' '}
+  <InlineCode>ContactForm</InlineCode> component and use where required.
+</Note>
+
+## Step 3: Deploy With ZEIT Now
+
+You can choose whether you want to deploy directly from the command line with [Now CLI](/download), or from a Git repository by installing either the [Now for GitHub](https://zeit.co/docs/v2/advanced/now-for-github/) or [Now for GitLab](https://zeit.co/docs/v2/advanced/now-for-gitlab/) integrations.
+
+To deploy your project from using [Now CLI](/download), all it takes is **a single command**:
+
+<Snippet dark text="now" />
+<Caption>Deploying your project with just a single command.</Caption>
+
+That’s it! Your form will now be live and deployed to a publicly accessible url immediately.
+
+Form submissions received from either your localhost or production environments will be emailed, and show up in your form submissions list. If you want to restrict where the form can be embedded, set your production URL in the authorized domains setting in Formspree.
+
+## Bonus: Special Formspree Names
+
+Formspree allows you to provide specially named inputs to **control how form submissions are processed**.
+
+Below is a list some of the most commonly used values, but you can find all of them in the [Form Setup section](https://help.formspree.io/hc/en-us/sections/115002389908-Form-setup) of the Formspree [help guide](https://help.formspree.io/hc/en-us).
+
+### `name="_replyto"`
+
+Use this name to set the Reply To email address of the submission notification emails.
+
+This allows you to quickly reply to form submissions in your inbox and is shown in the example below.
+
+```
+<input type="email" name="_replyto" placeholder="your email address">
+```
+
+<Caption>
+  An example <InlineCode>input</InlineCode> element that uses the{' '}
+  <InlineCode>name="_subject"</InlineCode> attribute to set the Reply To of the
+  email.
+</Caption>
+
+### `name="_subject"`
+
+Use this name to set the subject of notification emails. This will override the default **New submission from …** subject.
+
+<Note warning>
+  You should place this in a hidden input as done in the example below.
+</Note>
+
+```
+<input type="hidden" name="_subject" value="New lead on mysite.com">
+```
+
+<Caption>
+  An example <InlineCode>input</InlineCode> element that uses the{' '}
+  <InlineCode>name="_subject"</InlineCode> attribute to set the subject of the
+  email.
+</Caption>
+
+### `name="_next"`
+
+<Note>Available on Gold and Platinum plans.</Note>
+
+By default, after submitting a form the user is redirected to the Formspree **Thank You** page.
+
+You can redirect the user to an alternative page on your own website by adding a hidden input tag with a `name="_next"` attribute.
+
+The value of the attribute should be the full URL of the page you want to redirect the user to as shown below.
+
+```
+<input type="hidden" name="_next" value="https://mysite.com/thanks.html"/>
+```
+
+<Caption>
+  An example <InlineCode>input</InlineCode> element that uses the{' '}
+  <InlineCode>name="_next"</InlineCode> attribute to provide a redirect.
+</Caption>
+
+Be sure to include the `http://` or `https://` prefix, as this is required for the redirect to work.
+
+export default ({ children }) => <Guide meta={meta}>{children}</Guide>
+
+export const config = {
+  amp: 'hybrid'
+}
