@@ -15,7 +15,7 @@ export const meta = {
   url: '/guides/deploying-react-forms-using-formspree-with-zeit-now',
   editUrl:
     'pages/guides/deploying-react-forms-using-formspree-with-zeit-now.mdx',
-  lastEdited: '2019-09-05T13:48:47.000Z'
+  lastEdited: '2019-09-05T19:04:44.000Z'
 }
 
 [Formspree](https://formspree.io/) is a form backend that sends submissions via email, and connects to several 3rd party services such as Google Sheets, Mailchimp, Trello and more. Formspree also provides spam mitigation and filtering, file upload, auto responses and other tools to help you manage your forms.
@@ -49,6 +49,8 @@ This will first ask you to provide a password, then you’ll be redirected to an
 <Caption>The <b>Form Details Integration</b> page on Formspree.</Caption>
 
 Make a note of the URL endpoint. This will be used that later to submit the form you build.
+
+Select the **Settings** tab, find the reCAPTCHA setting and toggle it off. This is required for submitting a Formspree form with AJAX.
 
 Next, you will create a React app using [Create-React-App](https://reactjs.org/docs/create-a-new-react-app.html) and add a form using [Formik](https://github.com/jaredpalmer/formik).
 
@@ -158,7 +160,7 @@ To deploy your project from using [Now CLI](/download), all it takes is **a sing
 <Snippet dark text="now" />
 <Caption>Deploying your project with the <InlineCode>now</InlineCode> command.</Caption>
 
-That’s it! Your form will now be live and deployed to a publicly accessible url immediately.
+That’s it! Your form is now live and deployed to a publicly accessible url immediately.
 
 Form submissions received from either your localhost or production environments will be emailed, and show up in your form submissions list. If you want to restrict where the form can be embedded, set your production URL in the authorized domains setting in Formspree.
 
