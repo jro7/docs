@@ -15,7 +15,7 @@ export const meta = {
   url: '/guides/deploying-react-forms-using-formspree-with-zeit-now',
   editUrl:
     'pages/guides/deploying-react-forms-using-formspree-with-zeit-now.mdx',
-  lastEdited: '2019-09-09T17:52:22.000Z'
+  lastEdited: '2019-09-09T18:01:32.000Z'
 }
 
 [Formspree](https://formspree.io/) is a form backend that sends submissions via email, and connects to several 3rd party services such as Google Sheets, Mailchimp, Trello and more. Formspree also provides spam mitigation and filtering, file upload, auto responses and other tools to help you manage your forms.
@@ -86,10 +86,6 @@ export default () => {
     submitted: false,
     submitting: false,
     info: { error: false, msg: null }
-  })
-  const [inputs, setInputs] = useState({
-    email: '',
-    message: ''
   })
   const handleServerResponse = (ok, msg) => {
     if (ok) {
