@@ -15,7 +15,7 @@ export const meta = {
   url: '/guides/deploying-react-forms-using-formspree-with-zeit-now',
   editUrl:
     'pages/guides/deploying-react-forms-using-formspree-with-zeit-now.mdx',
-  lastEdited: '2019-09-09T18:01:32.000Z'
+  lastEdited: '2019-09-09T19:11:21.000Z'
 }
 
 [Formspree](https://formspree.io/) is a form backend that sends submissions via email, and connects to several 3rd party services such as Google Sheets, Mailchimp, Trello and more. Formspree also provides spam mitigation and filtering, file upload, auto responses and other tools to help you manage your forms.
@@ -73,10 +73,6 @@ Add the `axios` dependency to your project:
 Add a `ContactForm.js` file to the `/src` directory with the code below:
 
 ```jsx
-import React from 'react'
-import { Formik, Form, Field } from 'formik'
-import axios from 'axios'
-
 import React, { useState } from 'react'
 import axios from 'axios'
 import './ContactForm.css'
